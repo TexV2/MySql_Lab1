@@ -1,6 +1,14 @@
 -- Carl Everman
 
 -- 1
+CREATE TABLE DischargeLog(
+appointmentID VARCHAR(50) NOT NULL,
+patientID VARCHAR(50) NOT NULL,
+dischargeDate DATE,
+FOREIGN KEY (appointmentID) REFERENCES Appointment(appointmentID),
+FOREIGN KEY (patientID) REFERENCES Patient(patientID)
+);
+
 CREATE TABLE Student (
 stNum VARCHAR(50) NOT NULL, 
 Fname VARCHAR(50),
