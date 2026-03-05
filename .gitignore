@@ -1,0 +1,41 @@
+# MySQL files
+*.sql
+*.sqlite
+*.sqlite3
+*.db
+
+# MySQL data directory
+/data/
+mysql/
+mysqld.pid
+
+# MySQL config
+my.cnf
+my.ini
+*.cnf
+
+# MySQL logs
+*.log
+mysql-bin.*
+mysql-slow.log
+mysql-error.log
+
+# MySQL dump files
+*.dump
+*.dmp
+
+# MySQL temp files
+*.frm
+*.MYD
+*.MYI
+*.ibd
+*.ibdata
+ibdata1
+ib_logfile*
+
+# Environment / credentials
+.env
+.env.*
+config.py
+secrets.py
+db_config.*
