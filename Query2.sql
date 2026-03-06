@@ -119,3 +119,72 @@ WHERE appointmentID = 5;
 SELECT * FROM DischargeLog;
 
 -- 6
+DELIMITER //
+
+CREATE PROCEDURE BookAppointment(
+	IN p_patientID VARCHAR(50),
+    IN p_doctorID VARCHAR(50),
+    IN p_appointmentDate DATE
+    )
+BEGIN
+	DECLARE activeAppointments INT;
+    
+    SELECT COUNT(*) INTO activeAppointments
+    FROM Appointment 
+    WHERE doctorID = p_doctorID
+    AND dischargeDate IS NULL;
+	
+    IF activeAppointments > 0 THEN
+		SELECT 'Doctor not available' AS Message;
+    ELSE
+		INSERT INTO Appointment(patientID, doctorID, appointmentDate, durationInDays, dischargeDate)
+        VALUES (p_patientID, p_doctorID, p_appointmentDate, NULL, NULL);
+        SELECT 'Patient admitted' AS Message;
+	END IF;
+END //
+
+DELIMITER ;
+DROP PROCEDURE BookAppointment;
+CALL BookAppointment('P003', 'D001', '2026-03-06');
+
+-- 7
+
+SELECT 
+	p.patientID,
+    CONCAT(p.Fname, ' ', p.Lname) AS name_,
+    a.appointmentID,
+    a.doctorID
+FROM Patient p
+LEFT JOIN Appointment a ON p.patientID = a.patientID
+ORDER BY a.appointmentID DESC;
+
+-- 8
+SELECT
+	CONCAT(p.FName, ' ', p.Lname) AS name_,
+    d.Speciality,
+    DATE_ADD(a.appointmentDate, INTERVAL a.durationInDays DAY) AS expectedDischarge
+FROM Patient p
+JOIN Appointment a ON p.patientID = a.patientID
+JOIN Doctor d ON a.doctorID = a.doctorID
+WHERE dischargeDate IS NULL
+ORDER BY expectedDischarge DESC;
+
+-- 9
+SELECT 
+	appointmentID,
+    patientName,
+    daysOverdue,
+    daysOVerdue * 150 AS totalAmount
+FROM(
+    SELECT
+    a.appointmentID,
+    CONCAT(p.Fname, ' ', p.Lname) AS patientName,
+    DATEDIFF(a.dischargeDate, a.appointmentDate)-a.durationInDays AS daysOverdue
+FROM Appointment a
+JOIN Patient p ON p.patientID = a.patientID
+WHERE a.dischargeDate IS NOT NULL
+)
+AS sub
+WHERE DaysOverdue > 0;
+
+SELECT * FROM Appointment;
